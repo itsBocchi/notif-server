@@ -1,3 +1,7 @@
 /target
 config/serviceAccountKey.json
 config/sdkFirebaseconfig
+config/.env
+.env
+
+log/
