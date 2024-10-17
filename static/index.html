@@ -19,10 +19,10 @@
                     <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Alertas</a>
+                    <a class="nav-link" href="#">Features</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Info</a>
+                    <a class="nav-link" href="#">Pricing</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
@@ -66,12 +66,19 @@
                 },
                 body: JSON.stringify({ email, password })
             })
-            .then(response => response.json())
+            .then(response => response.text()) // Cambiar a .text() para manejar la respuesta como texto
             .then(data => {
-                if (data.success) {
-                    window.location.href = '/dashboard.html';
-                } else {
-                    document.getElementById('error-message').textContent = data.message;
+                console.log('Response:', data); // Imprimir la respuesta en la consola
+                try {
+                    const jsonData = JSON.parse(data); // Intentar parsear la respuesta como JSON
+                    if (jsonData.success) {
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        document.getElementById('error-message').textContent = jsonData.message;
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                    document.getElementById('error-message').textContent = 'An error occurred while processing your request.';
                 }
             })
             .catch(error => {

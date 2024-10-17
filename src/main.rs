@@ -13,10 +13,11 @@ mod model;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Inicializar el logger
+    // Inicializar log4rs
     log4rs::init_file("config/log4rs.yaml", Default::default()).unwrap();
 
-    info!("Starting server...");
+    // Log a message to verify logging is working
+    info!("Starting the server...");
 
     // Leer el archivo de configuración
     let mut file = File::open("config/firebase_config.json").expect("Config file not found");
