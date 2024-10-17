@@ -1,0 +1,9 @@
+2024-10-17T10:32:26.565593100-03:00 - INFO - Starting server...
+2024-10-17T10:32:26.567648600-03:00 - INFO - starting 12 workers
+2024-10-17T10:32:26.567709100-03:00 - INFO - Actix runtime found; starting in Actix runtime
+2024-10-17T10:32:26.567733300-03:00 - INFO - starting service: "actix-web-service-127.0.0.1:8080", workers: 12, listening on: 127.0.0.1:8080
+2024-10-17T10:32:30.294651-03:00 - INFO - 127.0.0.1 "GET / HTTP/1.1" 304 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0" 0.000838
+2024-10-17T10:32:31.806969200-03:00 - INFO - 127.0.0.1 "POST /auth/sign_in HTTP/1.1" 500 96 "http://localhost:8080/?" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0" 0.000182
+2024-10-17T10:32:49.224588700-03:00 - INFO - 127.0.0.1 "POST /auth/sign_in HTTP/1.1" 500 96 "http://localhost:8080/?" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0" 0.000136
+2024-10-17T10:38:14.739683800-03:00 - INFO - 127.0.0.1 "POST /auth/sign_in HTTP/1.1" 500 96 "http://localhost:8080/?" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0" 0.000251
+2024-10-17T10:39:29.416449900-03:00 - INFO - 127.0.0.1 "POST /auth/sign_in HTTP/1.1" 500 96 "http://localhost:8080/?" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0" 0.000141
