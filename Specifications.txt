@@ -1,3 +1,0 @@
-This rust server is supposed to be a server for the alertify app.
-It should work as a server for real time routing sent to the client fluter app
-It should send an alert to the app when started
