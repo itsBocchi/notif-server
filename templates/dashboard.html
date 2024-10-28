@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Bienvenido al Dashboard</h1>
+        <p>Este es un tablero vacío.</p>
+        <button id="fetchDataBtn" class="btn btn-primary">Fetch Earthquake Data</button>
+    </div>
+
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTO6_uNEZgwfSAuvnSSWC0EZaMKiHkyMY",
+            authDomain: "alertduck-4746d.firebaseapp.com",
+            projectId: "alertduck-4746d",
+            storageBucket: "alertduck-4746d.appspot.com",
+            messagingSenderId: "452675759021",
+            appId: "1:452675759021:web:e87e3cf69755b227a70f24"
+        };
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let earthquakeCounter = 0;
+        document.getElementById('fetchDataBtn').addEventListener('click', function() {
+            fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-10-1&endtime=2024-10-17&minlatitude=-56&maxlatitude=-17&minlongitude=-75&maxlongitude=-66')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.features && data.features.length > 0) {
+                        let earthquake = data.features[earthquakeCounter].properties;
+                        let alertData = {
+                            depth: data.features[earthquakeCounter].geometry.coordinates[2] || 0,
+                            latitude: data.features[earthquakeCounter].geometry.coordinates[0] || 0,
+                            longitude: data.features[earthquakeCounter].geometry.coordinates[1] || 0,
+                            magnitude: earthquake.mag || 0,
+                            state: earthquake.place || "",
+                            time: new Date().toISOString(),
+                            title: earthquake.title || "",
+                            tsunami: earthquake.tsunami || false,
+                            type: earthquake.type || "",
+                        };
+                        db.collection('alertas').add(alertData)
+                            .then(() => {
+                                console.log('Alerta guardada en Firestore');
+                                earthquakeCounter++;
+                            })
+                            .catch(error => {
+                                console.error('Error al guardar la alerta en Firestore:', error);
+                            });
+                    } else {
+                        console.error('No se encontraron datos de terremotos');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al consultar la API de terremotos:', error);
+                });
+        });
+    </script>
+</body>
+</html>
