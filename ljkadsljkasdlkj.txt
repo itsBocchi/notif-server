@@ -1,0 +1,73 @@
+
+activo true
+(booleano)
+latitude -33.0153
+(número)
+longitude -71.55
+(número)
+puntos
+(array)
+0
+(mapa)
+latitude -33.0135
+(número)
+longitude -71.5496
+(número)
+1
+(mapa)
+latitude -33.0158
+(número)
+longitude -71.552
+(número)
+2
+(mapa)
+latitude -33.0142
+(número)
+longitude -71.5485
+(número)
+3
+(mapa)
+latitude -33.0129
+(número)
+longitude -71.5488
+(número)
+4
+(mapa)
+latitude -33.0163
+(número)
+longitude -71.5527
+(número)
+5
+(mapa)
+latitude -33.0138
+(número)
+longitude -71.5531
+(número)
+time 8 de noviembre de 2024, 5:41:18 p.m. UTC-3
+(marca de tiempo)
+title "a of Viña del Mar, Chile"
+(cadena)
+type "incendio" 
+
+
+
+
+
+
+depth 254.633
+(número)
+latitude -67.1879
+(número)
+longitude -23.7324
+(número)
+magnitude 4.6
+(número)
+state "103 km WNW of San Antonio de los Cobres, Argentina"
+(cadena)
+time 15 de octubre de 2024, 5:42:32 p.m. UTC-3
+(marca de tiempo)
+title "M 4.6 - 103 km WNW of San Antonio de los Cobres, Argentina"
+(cadena)
+tsunami false
+(booleano)
+type "earthquake" 

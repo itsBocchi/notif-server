@@ -7,4 +7,5 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('authenticate/', views.authenticate_user, name='authenticate_user'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('firebase-config/', views.firebase_config, name='firebase_config'),
 ]
