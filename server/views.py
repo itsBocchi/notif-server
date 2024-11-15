@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import firebase_admin
-from firebase_admin import auth
+from firebase_admin import auth, credentials, firestore, messaging
 import json
 import geopy.distance
-
-# Asegúrate de importar la configuración de Firebase
-import firebase_config
+import time
+from firebase_config import db
 from django.views.decorators.csrf import csrf_exempt
+
 
 @csrf_exempt
 def authenticate_user(request):
@@ -51,23 +51,72 @@ def get_distance_coords(coords1, coords2):
 
 # Recuperar fcm de de cada usuario cuya locacion esta a menos de 1km del la coordenada 0,0 de la 
 # coleccion usuarios
-def get_nearby_users(document_id):
+def get_nearby_users(alerta_id):
     users = []
-    for user in firebase_config.db.collection('usuarios').stream():
-        user_data = user.to_dict()
-        user_coords = (user_data['latitude'], user_data['longitude'])
-        # Obtener la alerta con el document_id
-        alert = firebase_config.db.collection('alertas').document(document_id).get()
-        if alert.exists:
-            alert_data = alert.to_dict()
-            evacuation_points = alert_data.get('puntos_evacuacion', [])
-            evacuation_radii = alert_data.get('radios_evacuacion', [])
-
-            # Calcular la distancia entre las coordenadas del usuario y los puntos de evacuación
-            for point, radius in zip(evacuation_points, evacuation_radii):
-                point_coords = (point['latitude'], point['longitude'])
-                distance = get_distance_coords(user_coords, point_coords)
-                if distance <= radius:
-                    users.append(user_data['fcmToken'])
-                    break
+    # distancia evacuacion
+    for punto_evacuacion in db.collection('alertas').document(alerta_id).get().to_dict()['puntos_evacuacion']:
+        for user in db.collection('usuarios').stream():
+            user_data = user.to_dict()
+            user_coords = (user_data['location']['latitude'], user_data['location']['longitude'])
+            if get_distance_coords(user_coords, (punto_evacuacion['latitude'], punto_evacuacion['longitude'])) <= db.collection('alertas').document(alerta_id).get().to_dict()['radios_evacuacion'][0]:
+                users.append(user_data['fcmToken'])
     return users
+
+def create_alert(request):
+    title = "79 km E of Copiapó, Chile"
+    puntos_evacuacion = [
+        {'latitude': -27.3667, 'longitude': -70.3333},
+        {'latitude': -27.3977, 'longitude': -70.3143},
+        # Agrega más puntos de evacuación según sea necesario
+    ]
+    # time = ahora, obtener hora actual
+    ts = time.time()
+    type = 'incendio'
+    # Crear una nueva alerta
+    alerta_ref = db.collection('alertas').add({
+        'title': title,
+        'puntos_evacuacion': puntos_evacuacion,
+        'radios_evacuacion': [12130982318092138,0.5],
+        'type': type,
+        'timestamp': ts,
+        'activo': True
+    })
+    alerta_id = alerta_ref[1].id
+    cherrypick(alerta_id)
+    return render(request, 'dashboard.html')
+
+def nuevosdatos(request):
+    # imprime los datos de todas las alertas en json
+    alertas = []
+    alertas_ref = db.collection('alertas')
+    for alerta in alertas_ref.stream():
+        alertas.append(alerta.to_dict())
+    return JsonResponse(alertas, safe=False)  # Establece safe=False para permitir listas
+
+def cherrypick(alerta_id):
+    # enviar notificacion a todos los usuarios cercanos
+    users = get_nearby_users(alerta_id)
+    registration_tokens = limpiarlista(users)
+    
+    message = messaging.MulticastMessage(
+        notification=messaging.Notification(
+            title='Alerta de evacuación',
+            body='¡Evacúa ahora!',
+        ),
+        data={'type': db.collection('alertas').document(alerta_id).get().to_dict()['type']},
+        tokens=registration_tokens,
+    )
+    # Envía el mensaje multicast
+    response = messaging.send_multicast(message)
+    if response.failure_count > 0:
+        responses = response.responses
+        failed_tokens = []
+        for idx, resp in enumerate(responses):
+            if not resp.success:
+                # The order of responses corresponds to the order of the registration tokens.
+                failed_tokens.append(registration_tokens[idx])
+        print('List of tokens that caused failures: {0}'.format(failed_tokens))
+
+# si un elemento de la lista se repite eliminalo
+def limpiarlista(lista):
+    return list(dict.fromkeys(lista))
