@@ -9,98 +9,11 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-5">Bienvenido al Dashboard</h1>
-        <p>Coloque los datos de su alerta aquí.</p>
-        <!-- este boton es un placeholder. Aqui se debe colocar el formulario de alerta donde el usuario pueda
-        ingresar los datos posibles son recuperados desde una bd relacional de django y corresponderán a 
-        tipo de catastrofe,  -->
-        <div>
-            <form action="/alerta" method="POST">
-                <div class="form-group">
-                    <label for="tipo">Tipo de alerta</label>
-                    <select class="form-control" id="tipo" name="tipo">
-                        <option value="1">Terremoto</option>
-                        <option value="2">Incendio</option>
-                        <option value="3">Inundación</option>
-                        <option value="4">Tsunami</option>
-                        <option value="5">Erupción volcánica</option>
-                    </select>
-                    <!-- coordenadas -->
-                    <label for="latitud">Latitud</label>
-                    <input type="text" class="form-control" id="latitud" name="latitud">
-                    <label for="longitud">Longitud</label>
-                    <input type="text" class="form-control" id="longitud" name="longitud">
-                    <!-- distancia evacuacion -->
-                    <label for="distancia">Distancia de evacuación</label>
-                    <input type="text" class="form-control" id="distancia" name="distancia">
-                    <!-- rellena aquellos datos que no se completaron con datos de la api -->
-                    <label for="fecha">Fecha</label>
-                    <input type="text" class="form-control" id="fecha" name="fecha">
-                    <label for="hora">Hora</label>
-                    <input type="text" class="form-control" id="hora" name="hora">
-                    <label for="magnitud">Magnitud</label>
-                    <input type="text" class="form-control" id="magnitud" name="magnitud">
-                    <label for="profundidad">Profundidad</label>
-                    <input type="text" class="form-control" id="profundidad" name="profundidad">
-                    <label for="estado">Estado</label>
-                    <input type="text" class="form-control" id="estado" name="estado">
-                    <label for="tsunami">Tsunami</label>
-                    <input type="text" class="form-control" id="tsunami" name="tsunami">
-                </div>
-                <button type="submit" class="btn btn-primary">Enviar</button>
-            </form>
-        </div>
+        <h1>Dashboard</h1>
+        <p>Welcome, <?php echo $user->name; ?>!</p>
+        <a href="logout">Logout</a>
     </div>
-
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <!-- Firebase Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
-    <script>
-        // Fetch Firebase configuration from the server
-        fetch('/firebase-config')
-            .then(response => response.json())
-            .then(firebaseConfig => {
-                // Initialize Firebase with the fetched configuration
-                firebase.initializeApp(firebaseConfig);
-                const db = firebase.firestore();
-
-                document.getElementById('fetchDataBtn').addEventListener('click', function() {
-                    fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-10-1&endtime=2024-10-17&minlatitude=-56&maxlatitude=-17&minlongitude=-75&maxlongitude=-66')
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.features && data.features.length > 0) {
-                                const earthquake = data.features[0].properties;
-                                const alertData = {
-                                    depth: profundidad || data.features[earthquakeCounter].geometry.coordinates[2] || 0,
-                                    latitude: latitud || data.features[earthquakeCounter].geometry.coordinates[0] || 0,
-                                    longitude: longitud || data.features[earthquakeCounter].geometry.coordinates[1] || 0,
-                                    magnitude: magnitud || earthquake.mag,
-                                    state: earthquake.place || "",
-                                    time: new Date(earthquake.time),
-                                    title: earthquake.title || "",
-                                    tsunami: earthquake.tsunami || false,
-                                    type: earthquake.type || ""
-                                };
-                                db.collection('alertas').add(alertData)
-                                    .then(() => {
-                                        console.log('Alerta guardada en Firestore');
-                                    })
-                                    .catch(error => {
-                                        console.error('Error al guardar la alerta en Firestore:', error);
-                                    });
-                            } else {
-                                console.error('No se encontraron datos de terremotos');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error al consultar la API de terremotos:', error);
-                        });
-                });
-            })
-            .catch(error => {
-                console.error('Error al obtener la configuración de Firebase:', error);
-            });
-    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
