@@ -1,6 +1,0 @@
-Django
-djangorestframework
-firebase-admin
-python-dotenv
-django-cors-headers
-geopy
