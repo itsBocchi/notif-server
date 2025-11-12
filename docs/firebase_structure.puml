@@ -1,0 +1,58 @@
+@startuml
+!theme plain
+title Estructura de Datos Firebase Firestore
+
+class "Documento Incendio" as fire_doc {
+    +document_id : auto-generated
+    +activo : true
+    +title : "USM Sede Viña del Mar"
+    +body : "Incendio detectado"
+    +type : "incendio"
+    +time : Timestamp
+    +latitude : -33.037542
+    +longitude : -71.485482
+    +puntos_evacuacion : Array
+    +radios_evacuacion : [1]
+}
+
+class "Documento Terremoto" as earthquake_doc {
+    +document_id : auto-generated
+    +activo : false
+    +title : "Quilpué, Chile"
+    +body : "Terremoto magnitud 7.5"
+    +type : "earthquake"
+    +time : Timestamp
+    +latitude : -33.050708
+    +longitude : -71.435072
+    +magnitude : 7.5
+    +puntos_evacuacion : Array
+    +radios_evacuacion : [500]
+}
+
+' Reglas de la estructura
+note right of fire_doc
+ESTRUCTURA INCENDIO:
+- activo: boolean (estado actual)
+- puntos_evacuacion: array de coordenadas
+- radios_evacuacion: array de distancias
+- magnitude: no aplica
+end note
+
+note right of earthquake_doc
+ESTRUCTURA TERREMOTO:
+- activo: boolean (estado actual)
+- magnitude: float (escala Richter)
+- puntos_evacuacion: array de coordenadas
+- radios_evacuacion: array de distancias
+end note
+
+note as firestore_note
+CARACTERÍSTICAS FIRESTORE:
+- Colección NoSQL sin esquema fijo
+- Documentos con ID auto-generado
+- Sincronización en tiempo real
+- Consultas por tipo y timestamp
+- Índices automáticos en campos consultados
+end note
+
+@enduml

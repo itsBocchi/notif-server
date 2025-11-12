@@ -1,0 +1,65 @@
+@startuml
+!theme plain
+
+' Actores externos
+actor "Organismo" as org
+actor "Usuario Móvil" as user
+
+' Componentes principales
+component "API Gateway" as api
+component "Auth Service" as auth
+component "Alert Service" as alert
+component "Notification Service" as notif
+
+' Bases de datos
+database "SQLite" as sqlite {
+  [API Keys]
+  [Notifications]
+}
+
+cloud "Firebase" as firebase {
+  [Firestore]
+  [FCM]
+}
+
+' Flujos principales
+org --> api : "POST /api/send-notification"
+api --> auth : "validate_api_key()"
+auth --> sqlite : "query API Keys"
+sqlite --> auth : "validation result"
+auth --> api : "authorized"
+
+api --> alert : "create_notification()"
+alert --> sqlite : "save notification"
+alert --> notif : "send_alert()"
+
+notif --> firebase : "sync to Firestore"
+notif --> firebase : "send FCM push"
+firebase --> user : "push notification"
+
+' Acceso directo móvil
+user --> firebase : "query alerts directly"
+firebase --> user : "real-time alerts"
+
+' Consultas administrativas
+org --> api : "GET /api/notifications"
+api --> auth : "validate_permissions()"
+api --> alert : "get_notifications()"
+alert --> sqlite : "query history"
+sqlite --> alert : "notification list"
+alert --> api : "formatted response"
+api --> org : "alert history"
+
+note right of firebase
+Acceso directo desde apps
+móviles para optimizar
+rendimiento del servidor
+end note
+
+note bottom of notif
+Circuit Breaker implementado
+para tolerancia a fallos
+con fallback a WebSocket
+end note
+
+@enduml

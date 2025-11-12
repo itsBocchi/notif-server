@@ -1,0 +1,68 @@
+@startuml
+!theme plain
+title Sistema de Alertas de Emergencia - Diagrama de Despliegue
+
+' Actores
+actor "User" as User
+actor "Admin" as Admin
+
+node "Smartphone" as Mobile {
+    [App Móvil]
+}
+
+' Servidor principal
+node "Servidor Backend\n<<Ubuntu 20.04, 4GB RAM>>" as Server {
+    component "Django 4.2.7\n<<Port 8000>>" as Django {
+        [Alert Management]
+        [Authentication]
+        [Geospatial]
+        [Notification]
+    }
+    
+    database "SQLite" as DB {
+        [notifications]
+        [api_keys]
+    }
+    
+    file "serviceAccountKey.json" as Config
+}
+
+' Servicios en la nube
+cloud "Google Cloud" as GCP {
+    component "Firebase FCM" as FCM
+    database "Firestore" as FS
+}
+
+' Sistemas externos
+node "Sistemas Externos" as External {
+    [Webhooks]
+    [APIs Terceros]
+}
+
+' Conexiones
+User --> Django : "HTTPS/8000\nAPI Key"
+Admin --> Django : "HTTPS/8000\nAdmin Key"
+Mobile --> Django : "HTTPS/8000"
+
+Django --> DB : "Django ORM"
+Django --> FCM : "Admin SDK/443"
+Django --> FS : "REST API/443"
+Django --> External : "HTTP POST"
+
+FCM --> Mobile : "Push Notifications"
+
+' Nota técnica
+note right of Django
+Arquitectura Modular:
+- /api/* (Alertas)
+- /auth/* (Autenticación)
+- /geo/* (Geoespacial)
+- /notifications/* (Envío)
+
+Patrones Implementados:
+- MVT (Django)
+- Repository
+- Circuit Breaker
+end note
+
+@enduml

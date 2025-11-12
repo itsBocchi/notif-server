@@ -1,0 +1,61 @@
+@startuml
+!theme plain
+title Diagrama de Flujo de Datos - Sistema de Alertas de Emergencia
+
+' Entidades externas
+rectangle "Organismo\nAutorizado" as org
+rectangle "Aplicación\nMóvil" as mobile
+rectangle "Sistemas\nExternos" as external
+
+' Procesos principales
+circle "1.0\nAutenticar\nAPI Key" as auth
+circle "2.0\nProcesar\nAlerta" as process
+circle "3.0\nSincronizar\nFirebase" as sync
+circle "4.0\nNotificar\nDispositivos" as notify
+
+' Almacenes de datos
+rectangle "D1: SQLite\n(Notifications)" as db1
+rectangle "D2: SQLite\n(API Keys)" as db2
+rectangle "D3: Firestore\n(Alerts)" as db3
+
+' Flujos de datos principales
+org --> auth : "API Key + Datos Alerta"
+auth --> db2 : "Validar API Key"
+db2 --> auth : "Estado Validación"
+auth --> process : "Datos Validados"
+
+process --> db1 : "Guardar Alerta Local"
+process --> sync : "Datos para Sincronizar"
+sync --> db3 : "Documento Firebase"
+sync --> notify : "Trigger Notificación"
+
+notify --> mobile : "Push Notification"
+notify --> external : "Webhook POST"
+
+mobile --> db3 : "Consultar Alertas"
+db3 --> mobile : "Lista Alertas Activas"
+
+' Flujos de retroalimentación
+db1 --> process : "Historial Alertas"
+process --> org : "Confirmación Creación"
+
+' Notas explicativas
+note right of auth
+Valida API Key activa
+Verifica permisos
+Extrae entidad origen
+end note
+
+note right of process
+Aplica reglas de negocio
+Auto-llena campo source
+Valida coordenadas
+end note
+
+note right of sync
+Transforma estructura
+Calcula puntos evacuación
+Maneja errores de red
+end note
+
+@enduml

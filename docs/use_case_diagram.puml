@@ -1,0 +1,63 @@
+@startuml
+!theme plain
+
+' Actores del sistema
+actor "Organismo\nAutorizado" as org
+actor "Usuario\nMóvil" as user
+actor "Administrador\nSistema" as admin
+
+' Sistema principal
+rectangle "Sistema de Alertas de Emergencia" {
+  
+  ' Módulo de Gestión de Alertas
+  rectangle "Gestión de Alertas" {
+    usecase "CU-01\nCrear Alerta\nde Emergencia" as UC01
+    usecase "CU-02\nConsultar Alertas\nActivas" as UC02
+    usecase "CU-03\nVer Historial\nde Alertas" as UC03
+  }
+  
+  ' Módulo de Notificaciones
+  rectangle "Notificaciones" {
+    usecase "CU-04\nRecibir\nNotificaciones" as UC04
+    usecase "CU-05\nFiltrar Alertas\npor Ubicación" as UC05
+  }
+  
+  ' Módulo de Administración
+  rectangle "Administración" {
+    usecase "CU-06\nGestionar\nAPI Keys" as UC06
+    usecase "CU-07\nMonitorear\nEstado Sistema" as UC07
+    usecase "CU-08\nConfigurar\nNotificaciones" as UC08
+  }
+  
+  ' Módulo del Sistema
+  rectangle "Sistema" {
+    usecase "CU-09\nSincronizar\ncon Firebase" as UC09
+    usecase "CU-10\nValidar\nCredenciales" as UC10
+  }
+}
+
+' Relaciones principales
+org --> UC01 : "Envía alertas"
+org --> UC03 : "Consulta historial"
+org --> UC10 : "Se autentica"
+
+user --> UC02 : "Consulta alertas"
+user --> UC04 : "Recibe notificaciones"
+user --> UC05 : "Filtra por zona"
+
+admin --> UC06 : "Administra claves"
+admin --> UC07 : "Supervisa sistema"
+admin --> UC08 : "Configura servicios"
+
+' Relaciones include
+UC01 ..> UC10 : "<<include>>"
+UC01 ..> UC09 : "<<include>>"
+UC03 ..> UC10 : "<<include>>"
+
+UC02 ..> UC05 : "<<include>>"
+UC04 ..> UC09 : "<<include>>"
+
+' Relaciones extend
+UC02 ..> UC04 : "<<extend>>"
+UC01 ..> UC08 : "<<extend>>"
+@enduml
