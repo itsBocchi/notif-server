@@ -1,0 +1,75 @@
+@startuml
+!theme plain
+
+participant "Alert Service" as alert
+participant "Circuit Breaker" as cb
+participant "Firebase" as firebase
+participant "WebSocket" as ws
+participant "SQLite" as db
+participant "App Móvil" as mobile
+
+alert -> cb : send_to_firebase(alert_data)
+activate cb
+
+alt Circuit Breaker CLOSED (Normal)
+    cb -> firebase : add_document("alerts", data)
+    activate firebase
+    firebase --> cb : Success: document_id
+    deactivate firebase
+    cb --> alert : {status: "success", firebase_id: "abc123"}
+    
+else Circuit Breaker OPEN (Firebase failing)
+    cb -> cb : check_failure_count() > threshold
+    cb -> ws : send_websocket_notification(data)
+    activate ws
+    ws -> mobile : WebSocket message
+    mobile --> ws : ACK
+    ws --> cb : {status: "websocket_sent"}
+    deactivate ws
+    cb -> db : INSERT INTO notification (fallback)
+    db --> cb : local_id
+    cb --> alert : {status: "fallback", local_id: 456}
+    
+else Circuit Breaker HALF-OPEN (Testing)
+    cb -> firebase : test_connection()
+    activate firebase
+    
+    alt Firebase recovered
+        firebase --> cb : Success
+        deactivate firebase
+        cb -> cb : reset_failure_count()
+        cb -> firebase : add_document("alerts", data)
+        activate firebase
+        firebase --> cb : document_id
+        deactivate firebase
+        cb --> alert : {status: "recovered", firebase_id: "def789"}
+        
+    else Firebase still failing
+        firebase --> cb : Error: timeout
+        deactivate firebase
+        cb -> cb : increment_failure_count()
+        cb -> cb : open_circuit()
+        cb -> ws : send_websocket_notification(data)
+        activate ws
+        ws --> cb : websocket_sent
+        deactivate ws
+        cb --> alert : {status: "still_failing", fallback: true}
+    end
+end
+
+deactivate cb
+
+note right of cb
+Estados del Circuit Breaker:
+- CLOSED: Funcionamiento normal
+- OPEN: Firebase no disponible
+- HALF-OPEN: Probando recuperación
+end note
+
+note right of ws
+Fallback garantiza que
+las alertas lleguen aunque
+Firebase esté caído
+end note
+
+@enduml

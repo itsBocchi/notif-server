@@ -1,0 +1,52 @@
+@startuml
+!theme plain
+
+actor "Organismo\nAutorizado" as org
+participant "API Gateway" as gateway
+participant "Auth Service" as auth
+participant "Alert Service" as alert
+participant "SQLite" as db
+participant "Firestore" as firestore
+
+org -> gateway : GET /api/notifications/\n?active=true&api_key=xyz
+activate gateway
+
+gateway -> auth : validate_api_key(api_key)
+activate auth
+auth -> db : SELECT * FROM apikey WHERE key=?
+db --> auth : ApiKey data
+auth --> gateway : {valid: true, permissions: "read"}
+deactivate auth
+
+gateway -> alert : get_notifications(filters)
+activate alert
+
+alt Consulta local (SQLite)
+    alert -> db : SELECT * FROM notification\nWHERE active=true\nORDER BY created_at DESC
+    db --> alert : List[Notification]
+else Consulta Firebase (fallback)
+    alert -> firestore : collection("alerts")\n.where("activo", "==", true)\n.orderBy("time", "desc")
+    firestore --> alert : List[Document]
+end
+
+alert -> alert : apply_filters()
+alert -> alert : format_response()
+alert --> gateway : {notifications: [...], total: 12}
+deactivate alert
+
+gateway --> org : HTTP 200\n{notifications: [...], metadata: {...}}
+deactivate gateway
+
+note right of alert
+Consulta de historial
+de alertas para
+organismos autorizados
+end note
+
+note right of gateway
+Validación de permisos
+antes de mostrar
+datos sensibles
+end note
+
+@enduml

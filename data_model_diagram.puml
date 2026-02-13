@@ -1,0 +1,79 @@
+@startuml
+!theme plain
+
+' Entidades principales
+entity "Notification" as notification {
+    * id : INTEGER <<PK>>
+    --
+    * title : VARCHAR(255)
+    * body : TEXT
+    * topic : VARCHAR(100)
+    * emergency_type : VARCHAR(50)
+    latitude : FLOAT
+    longitude : FLOAT
+    magnitude : FLOAT
+    * active : BOOLEAN
+    * created_at : DATETIME
+    source : VARCHAR(100)
+}
+
+entity "ApiKey" as apikey {
+    * id : INTEGER <<PK>>
+    --
+    * key : UUID <<UNIQUE>>
+    * name : VARCHAR(100)
+    description : TEXT
+    * is_active : BOOLEAN
+    * is_admin : BOOLEAN
+    * created_at : DATETIME
+}
+
+' Base de datos externa (Firebase Firestore)
+cloud "Firebase Firestore" as firestore {
+    entity "alerts" as alerts {
+        * document_id : STRING <<PK>>
+        --
+        * title : STRING
+        * body : STRING
+        * type : STRING
+        * time : TIMESTAMP
+        * activo : BOOLEAN
+        latitude : NUMBER
+        longitude : NUMBER
+        magnitude : NUMBER
+        puntos_evacuacion : ARRAY
+        radios_evacuacion : ARRAY
+    }
+}
+
+' Relaciones conceptuales
+notification ||--o{ alerts : "sincroniza con"
+apikey ||--o{ notification : "autoriza creación"
+
+' Notas explicativas
+note right of notification
+Tabla principal en SQLite
+- Almacena alertas localmente
+- Campos obligatorios: title, body, topic
+- Geolocalización opcional
+- Auditoría con created_at
+end note
+
+note right of apikey
+Sistema de autenticación
+- UUID como clave de acceso
+- name: identificador del organismo
+- description: información opcional
+- Dos niveles: User/Admin
+- Control de estado activo/inactivo
+end note
+
+note right of alerts
+Colección en Firestore
+- Sincronización con apps móviles
+- Estructura específica por tipo
+- Puntos y radios de evacuación
+- Timestamp para ordenamiento
+end note
+
+@enduml
