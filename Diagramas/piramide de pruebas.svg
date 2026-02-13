@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   sodipodi:docname="piramide de pruebas.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.50835204"
+     inkscape:cx="547.84869"
+     inkscape:cy="534.07871"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="M 170.78575,117.01724 H 51.455911 L 23.107797,166.11812 H 199.13454 Z"
+       style="fill:#214478;stroke:#000000;stroke-width:0.346195"
+       id="path14"
+       inkscape:export-filename="Piramide de pruebas.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       d="M 139.36922,62.602375 H 82.87245 L 51.455911,117.01724 H 170.78575 Z"
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.346195"
+       id="path13" />
+    <path
+       d="M 111.1205,13.674578 82.87245,62.602375 h 56.49677 z"
+       style="fill:#ffdd55;stroke:#000000;stroke-width:0.346195"
+       id="path12" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.87778px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:justify;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:#ffffff;stroke-width:0.225283"
+       x="110.89449"
+       y="137.19591"
+       id="text14"><tspan
+         sodipodi:role="line"
+         id="tspan14"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.87778px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:center;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0.225283"
+         x="110.89449"
+         y="137.19591">Pruebas</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.87778px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:center;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0.225283"
+         x="110.89449"
+         y="149.66635"
+         id="tspan17">Unitarias</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:justify;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.225283"
+       x="111.12496"
+       y="81.060921"
+       id="text14-8"><tspan
+         sodipodi:role="line"
+         id="tspan14-8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:center;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0.225283"
+         x="111.12496"
+         y="81.060921">Pruebas</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:center;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0.225283"
+         x="111.12496"
+         y="90.859123"
+         id="tspan15">de </tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:center;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0.225283"
+         x="111.12496"
+         y="100.65733"
+         id="tspan16">integración</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:justify;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.225283"
+       x="111.10394"
+       y="41.40374"
+       id="text14-8-5"><tspan
+         sodipodi:role="line"
+         id="tspan14-8-1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:center;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0.225283"
+         x="111.10394"
+         y="41.40374">Pruebas</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:center;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0.225283"
+         x="111.10394"
+         y="50.311199"
+         id="tspan15-7">de </tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:'MS Outlook';-inkscape-font-specification:'MS Outlook';text-align:center;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0.225283"
+         x="111.10394"
+         y="59.218655"
+         id="tspan18">Sistema</tspan></text>
+  </g>
+</svg>
