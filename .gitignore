@@ -90,3 +90,9 @@ local_settings.py
 .env
 db.sqlite3
 alertduckaccountkey.json
+TT.docx
+serviceAccountKey.json
+accountkey.json
+*.json
+!package.json
+!tsconfig.json

@@ -1,96 +1,160 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio de Sesión</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Sistema de Notificaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .login-container {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        body { padding-top: 2rem; }
+        .notification {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .login-form {
-            width: 100%;
-            max-width: 400px;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #fff;
-        }
+        .notification-title { font-weight: bold; }
+        .notification-time { font-size: 0.8rem; color: #6c757d; }
     </style>
 </head>
 <body>
-    <div class="container login-container">
-        <div class="login-form">
-            <h2 class="text-center">Iniciar Sesión</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Correo Electrónico</label>
-                    <input type="email" class="form-control" id="email" placeholder="Ingresa tu correo" required>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="text-center">Sistema de Notificaciones</h1>
+                <p class="text-center">Visualización de notificaciones en tiempo real</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Notificaciones Recientes</span>
+                        <a href="/dashboard/" class="btn btn-sm btn-outline-primary">Ver Dashboard</a>
+                    </div>
+                    <div class="card-body">
+                        <div id="notifications-container"></div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña" required>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Documentación de API
+                    </div>
+                    <div class="card-body">
+                        <h5>Enviar notificación</h5>
+                        <p><code>POST /api/send-notification/</code></p>
+                        <p>Headers:</p>
+                        <pre><code>Content-Type: application/json
+X-API-Key: tu-api-key</code></pre>
+                        <p>Body:</p>
+                        <pre><code>{
+    "title": "Título de la notificación",
+    "body": "Contenido de la notificación",
+    "topic": "general"
+}</code></pre>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
-            </form>
+            </div>
         </div>
     </div>
 
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <!-- Firebase Authentication -->
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script>
-        // Configuración de Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBTO6_uNEZgwfSAuvnSSWC0EZaMKiHkyMY",
-            authDomain: "alertduck-4746d.firebaseapp.com",
-            projectId: "alertduck-4746d",
-            storageBucket: "alertduck-4746d.appspot.com",
-            messagingSenderId: "452675759021",
-            appId: "1:452675759021:web:e87e3cf69755b227a70f24"
+        // WebSocket connection
+        const notificationSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/notifications/'
+        );
+
+        notificationSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.type === 'notification') {
+                addNotification(data.title, data.body, data.topic, data.source);
+            }
         };
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
 
-        // Manejar el formulario de inicio de sesión
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var email = document.getElementById('email').value;
-            var password = document.getElementById('password').value;
+        notificationSocket.onclose = function(e) {
+            console.error('Notification socket closed unexpectedly');
+        };
 
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    return userCredential.user.getIdToken();
-                })
-                .then((idToken) => {
-                    // Envía el token de ID a tu backend para la autenticación
-                    fetch('/authenticate/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ idToken: idToken }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Success:', data);
-                        // Redirigir al usuario a la página de inicio
-                        window.location.href = '/dashboard/';
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
+        // Load initial notifications
+        fetch('/api/notifications/')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('notifications-container');
+                container.innerHTML = '';
+                
+                if (data.notifications && data.notifications.length > 0) {
+                    data.notifications.forEach(notification => {
+                        addNotificationToDOM(
+                            notification.title,
+                            notification.body,
+                            notification.topic,
+                            notification.source,
+                            new Date(notification.created_at)
+                        );
                     });
-                })
-                .catch((error) => {
-                    console.error('Error signing in:', error);
-                });
-        });
+                } else {
+                    container.innerHTML = '<p class="text-center">No hay notificaciones disponibles.</p>';
+                }
+            });
+
+        function addNotification(title, body, topic, source) {
+            addNotificationToDOM(title, body, topic, source, new Date());
+        }
+
+        function addNotificationToDOM(title, body, topic, source, time) {
+            const container = document.getElementById('notifications-container');
+            
+            const notificationDiv = document.createElement('div');
+            notificationDiv.className = 'notification bg-light';
+            
+            const titleElement = document.createElement('div');
+            titleElement.className = 'notification-title';
+            titleElement.textContent = title;
+            
+            const bodyElement = document.createElement('div');
+            bodyElement.className = 'notification-body';
+            bodyElement.textContent = body;
+            
+            const metaElement = document.createElement('div');
+            metaElement.className = 'notification-meta d-flex justify-content-between mt-2';
+            
+            const infoElement = document.createElement('div');
+            
+            const topicElement = document.createElement('span');
+            topicElement.className = 'badge bg-secondary me-2';
+            topicElement.textContent = topic;
+            
+            const sourceElement = document.createElement('span');
+            sourceElement.className = 'badge bg-info me-2';
+            sourceElement.textContent = source || 'desconocido';
+            
+            const timeElement = document.createElement('span');
+            timeElement.className = 'notification-time';
+            timeElement.textContent = formatTime(time);
+            
+            infoElement.appendChild(topicElement);
+            infoElement.appendChild(sourceElement);
+            
+            metaElement.appendChild(infoElement);
+            metaElement.appendChild(timeElement);
+            
+            notificationDiv.appendChild(titleElement);
+            notificationDiv.appendChild(bodyElement);
+            notificationDiv.appendChild(metaElement);
+            
+            container.prepend(notificationDiv);
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString() + ' ' + date.toLocaleDateString();
+        }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

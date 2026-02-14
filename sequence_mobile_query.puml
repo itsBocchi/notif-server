@@ -1,0 +1,52 @@
+@startuml
+!theme plain
+
+actor "Usuario\nMóvil" as user
+participant "App Móvil" as mobile
+participant "Firebase SDK" as sdk
+participant "Firestore" as firestore
+
+user -> mobile : Abrir app / Refresh
+activate mobile
+
+mobile -> sdk : initialize_firebase()
+sdk --> mobile : firebase_app
+
+mobile -> sdk : collection("alerts")\n.where("activo", "==", true)\n.orderBy("time", "desc")
+activate sdk
+
+sdk -> firestore : query(alerts, filters)
+activate firestore
+firestore --> sdk : List[AlertDocument]
+deactivate firestore
+
+sdk --> mobile : realtime_snapshot
+deactivate sdk
+
+mobile -> mobile : filter_by_location(user_coords)
+mobile -> mobile : calculate_distances()
+mobile -> mobile : update_map_markers()
+mobile -> mobile : show_alert_list()
+
+mobile --> user : Alertas mostradas en mapa
+deactivate mobile
+
+note right of mobile
+Acceso directo a Firestore
+con permisos de solo lectura
+configurados en reglas
+end note
+
+note right of sdk
+Firebase SDK maneja
+autenticación automática
+y sincronización en tiempo real
+end note
+
+note right of firestore
+Reglas de seguridad:
+allow read: if true;
+allow write: if false;
+end note
+
+@enduml

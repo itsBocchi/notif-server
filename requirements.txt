@@ -1,6 +1,7 @@
-Django
-djangorestframework
-firebase-admin
-python-dotenv
-django-cors-headers
-geopy
+Django==4.2.7
+firebase-admin==6.2.0
+python-dotenv==1.0.0
+channels==4.0.0
+daphne==4.0.0
+asgiref>=3.6.0
+twisted[tls]>=22.4

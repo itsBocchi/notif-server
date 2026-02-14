@@ -1,0 +1,54 @@
+@startuml
+!theme plain
+title Modelo Entidad-Relación - Sistema de Alertas de Emergencia
+
+class Notification {
+    +id : INTEGER
+    +title : VARCHAR(255)
+    +body : TEXT
+    +topic : VARCHAR(100)
+    +emergency_type : VARCHAR(50)
+    +latitude : FLOAT
+    +longitude : FLOAT
+    +magnitude : FLOAT
+    +active : BOOLEAN
+    +created_at : DATETIME
+    +source : VARCHAR(150)
+    +api_key_id : INTEGER
+}
+
+class ApiKey {
+    +id : INTEGER
+    +key : UUID
+    +name : VARCHAR(100)
+    +entidad : VARCHAR(150)
+    +description : TEXT
+    +is_active : BOOLEAN
+    +is_admin : BOOLEAN
+    +created_at : DATETIME
+}
+
+ApiKey ||--o{ Notification : "creada por"
+
+note top of Notification
+RESTRICCIONES:
+- title: NOT NULL, máximo 255 caracteres
+- body: NOT NULL, texto largo
+- emergency_type: 'incendio', 'earthquake', 'general'
+- latitude/longitude: rango válido de coordenadas
+- magnitude: solo para emergency_type = 'earthquake'
+- source: copiado desde ApiKey.entidad
+- api_key_id: referencia al organismo creador
+end note
+
+note top of ApiKey
+RESTRICCIONES:
+- key: UUID único generado automáticamente
+- name: NOT NULL, nombre identificatorio
+- entidad: NOT NULL, organismo autorizado
+- description: OPCIONAL, información adicional
+- is_admin: define permisos (User/Admin)
+- Solo API Keys activas pueden crear alertas
+end note
+
+@enduml
